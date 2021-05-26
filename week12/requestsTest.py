@@ -11,4 +11,3 @@ user = data[0]
 print(user['name'])
 address = user['address']
 print(address)
-

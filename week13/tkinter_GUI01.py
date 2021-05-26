@@ -1,34 +1,72 @@
 # tkinter를 이용한 친구관리 GUI
 
 from tkinter import *
+import pickle
 
-def search() :
+dict = {}   #　空白
+try:
+    with open("./addressData.json", "rb") as f:
+        dict = pickle.load(f)
+except:
+    print("ファイル無し")
+
+#e1 name e2 phone e3 address
+
+def search():
     e1.focus_set()
-    print("검색")
-    t.insert(END, e1.get() + "을 검색 했습니다\n")
+
+    name = e1.get()
+    if dict.get(name):
+        t.insert(END, f"名前 = {name}")
+        t.insert(END, f"電話番号 = {dict[name][0]}")
+        t.insert(END, f"住所 = {dict[name][1]}")
+        t.insert(END, "----------------------------------")
+    else:
+        t.insert(END, f"[{name}]がありません")
+        t.insert(END, "----------------------------------")
+
+    e1.delete(0, END)
+    e2.delete(0, END)
+    e3.delete(0, END)
+
+def add():
+    e1.focus_set()
+
+    name = e1.get()
+    phoneNum = e2.get()
+    address = e3.get()
+
+    dict[name] = [phoneNum, address]    #　ディクショナリー　保存
+
+    t.insert(END, f"[{name}]を追加しました")
+    t.insert(END, "----------------------------------")
+
+    e1.delete(0, END)
+    e2.delete(0, END)
+    e3.delete(0, END)
+
+def delete():
+    e1.focus_set()
+
+    name = e1.get()
+    dict.pop(name)
+
+    t.insert(END, f"[{name}]を削除しました")
+    t.insert(END, "----------------------------------")
     e1.delete(0, END)
 
-def add() :
-    e1.focus_set()
-    print("추가")
-    t.insert(END, e2.get() + "을 추가 했습니다\n")
+def output():
+    for key in sorted(dict):
+        t.insert(END, f"名前 = {key}")
+        t.insert(END, f"電話番号 = {dict[key][0]}")
+        t.insert(END, f"住所 = {dict[key][1]}")
+        t.insert(END, "----------------------------------")
     e1.delete(0, END)
 
-def delete() :
-    e1.focus_set()
-    print("삭제")
-    t.insert(END, e1.get() + "을 삭제 했습니다\n")
-    e1.delete(0, END)
-
-def output() :
-    e1.focus_set()
-    print("삭제")
-    t.insert(END, e1.get() + "을 출력 했습니다\n")
-    e1.delete(0, END)
-
-def saveExit() :
-    print("저장 & 종료")
-    t.insert(END, "저장 & 종료\n")
+def saveExit():
+    with open("./addressData.json", "wb") as f:
+        pickle.dump(dict, f)
+        f.close()
     exit()
 
 window = Tk()
